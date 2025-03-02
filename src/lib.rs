@@ -9,12 +9,13 @@ pub fn time_it(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let block = &func.block;
     let sig = &func.sig;
     let vis = &func.vis;
-
     TokenStream::from(quote! {
         #vis #sig {
+            use tracing::{info};
+            tracing_subscriber::fmt::init();
             let start = std::time::Instant::now();
             let result = { #block };
-            println!("Execution de {}: {:?}", stringify!(#name), start.elapsed());
+            info!("Executing function {}: {:?}", stringify!(#name), start.elapsed().round(2));
             result
         }
     })
