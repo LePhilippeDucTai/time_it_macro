@@ -13,8 +13,6 @@ pub fn time_it(_attr: TokenStream, item: TokenStream) -> TokenStream {
     TokenStream::from(quote! {
         #vis #sig {
             use tracing::info;
-            use tracing_subscriber;
-            tracing_subscriber::fmt::init();
             let start = std::time::Instant::now();
             let result = { #block };
             let duration = start.elapsed();
