@@ -26,8 +26,7 @@ pub fn time_it(_attr: TokenStream, item: TokenStream) -> TokenStream {
             } else {
                 format!("{:.3} s", duration.as_secs_f64())
             };
-
-            info!("Execution de {}: {}", stringify!(#name), time_str);
+            info!("{}: {}", stringify!(#name), time_str);
             result
         }
     })
