@@ -9,14 +9,25 @@ pub fn time_it(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let block = &func.block;
     let sig = &func.sig;
     let vis = &func.vis;
+
     TokenStream::from(quote! {
         #vis #sig {
-            use tracing::{info};
-            use tracing_subscriber;
-            tracing_subscriber::fmt::init();
+            use tracing::info;
             let start = std::time::Instant::now();
             let result = { #block };
-            info!("Executing function {}: {:?}", stringify!(#name), start.elapsed().round(2));
+            let duration = start.elapsed();
+
+            let time_str = if duration.as_nanos() < 1_000 {
+                format!("{} ns", duration.as_nanos())
+            } else if duration.as_micros() < 1_000 {
+                format!("{} µs", duration.as_micros())
+            } else if duration.as_millis() < 1_000 {
+                format!("{} ms", duration.as_millis())
+            } else {
+                format!("{:.3} s", duration.as_secs_f64())
+            };
+
+            info!("Execution de {}: {}", stringify!(#name), time_str);
             result
         }
     })
